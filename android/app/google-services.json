@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "823810221730",
+    "project_id": "medlytic-d891f",
+    "storage_bucket": "medlytic-d891f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823810221730:android:9e99fb60a7437e6b07d9fb",
+        "android_client_info": {
+          "package_name": "com.example.medlytic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDfJRaFGVcSdyI3IBQe3ewTPsbVlV2ptE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
