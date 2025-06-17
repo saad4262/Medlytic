@@ -48,12 +48,12 @@ class AppController extends GetxController {
 
       if (apiConnectionStatus.value) {
         print('✅ API connected successfully');
-        Get.snackbar(
-          'API Connected',
-          'Gemini AI is ready for medical analysis',
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 2),
-        );
+        // Get.snackbar(
+        //   'API Connected',
+        //   'Gemini AI is ready for medical analysis',
+        //   snackPosition: SnackPosition.TOP,
+        //   duration: const Duration(seconds: 2),
+        // );
       } else {
         print('⚠️ API connection failed, using offline mode');
         Get.snackbar(

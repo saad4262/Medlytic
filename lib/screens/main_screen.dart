@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medlytic/screens/home_screen.dart';
+import 'package:medlytic/screens/report_health_score.dart';
 import '../controllers/navigation_controller.dart';
 
 import '../theme/app_theme.dart';
@@ -73,7 +74,7 @@ class MainScreen extends StatelessWidget {
               },
               children: [
                 HomeScreen(),
-                AnalysisScreen(),
+                ReportScoreScreen(),
                 HistoryScreen(),
                 ProfileScreen(),
               ],

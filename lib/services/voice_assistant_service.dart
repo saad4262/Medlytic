@@ -964,33 +964,121 @@ class VoiceAssistantService {
     }
   }
 
-  Future<void> _setDefaultLanguage() async {
-    // Try to find and set English language
-    List<String> englishOptions = [
-      'en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN', 'en'
-    ];
 
-    for (String englishLang in englishOptions) {
+  // Future<void> _setDefaultLanguage() async {
+  //   List<String> englishOptions = ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN', 'en'];
+  //
+  //   for (String englishLang in englishOptions) {
+  //     try {
+  //       bool isAvailable = await flutterTts.isLanguageAvailable(englishLang);
+  //       if (isAvailable) {
+  //         language = englishLang;
+  //         await flutterTts.setLanguage(englishLang);
+  //         print('🔊 Set English language to: $englishLang');
+  //
+  //         // ✅ Try setting a matching voice if available
+  //         final voices = await flutterTts.getVoices;
+  //         final matchingVoice = voices.firstWhere(
+  //               (v) =>
+  //           (v['locale']?.toLowerCase() == englishLang.toLowerCase()) &&
+  //               v['name'] != null,
+  //           orElse: () => null,
+  //         );
+  //
+  //         if (matchingVoice != null) {
+  //           await flutterTts.setVoice({
+  //           // if (matchingVoice != null) {
+  //           // await flutterTts.setVoice({
+  //           // "name": "en-us-x-sfg#male_1-local", // replace with a real name from step 1
+  //           // "locale": "en-US",
+  //           // });
+  //             'name': matchingVoice['name'],
+  //             'locale': matchingVoice['locale'],
+  //           });
+  //           print('🗣️ Voice set: ${matchingVoice['name']} (${matchingVoice['locale']})');
+  //         } else {
+  //           print('⚠️ No matching voice found for $englishLang');
+  //         }
+  //
+  //         return;
+  //       }
+  //     } catch (e) {
+  //       print('⚠️ Failed to check language $englishLang: $e');
+  //     }
+  //   }
+  //
+  //   // 🔻 Fallback
+  //   if (_availableLanguages.isNotEmpty) {
+  //     language = _availableLanguages.first;
+  //     await flutterTts.setLanguage(language!);
+  //     print('🔊 Fallback to first available language: $language');
+  //   }
+  // }
+
+
+  Future<void> _setDefaultLanguage() async {
+    List<String> preferredLanguages = ['en-US', 'en-GB', 'en-IN', 'ur-PK', 'ur'];
+    final voices = await flutterTts.getVoices;
+
+    for (String lang in preferredLanguages) {
       try {
-        bool isAvailable = await flutterTts.isLanguageAvailable(englishLang);
-        if (isAvailable) {
-          language = englishLang;
-          await flutterTts.setLanguage(englishLang);
-          print('🔊 Set English language to: $englishLang');
-          return;
+        bool isAvailable = await flutterTts.isLanguageAvailable(lang);
+        if (!isAvailable) continue;
+
+        await flutterTts.setLanguage(lang);
+        print('🌐 Language set: $lang');
+
+        final matchingVoice = voices.firstWhere(
+              (v) => v['locale']?.toLowerCase() == lang.toLowerCase(),
+          orElse: () => null,
+        );
+
+        if (matchingVoice != null) {
+          await flutterTts.setVoice({
+            'name': matchingVoice['name'],
+            'locale': matchingVoice['locale'],
+          });
+          print('🗣️ Voice set: ${matchingVoice['name']} (${matchingVoice['locale']})');
+        } else {
+          print('⚠️ No matching voice found for $lang');
         }
+
+        return; // ✅ Exit after setting the first valid language and voice
       } catch (e) {
-        print('⚠️ Failed to check language $englishLang: $e');
+        print('❌ Error setting language $lang: $e');
       }
     }
 
-    // Fallback to first available language
-    if (_availableLanguages.isNotEmpty) {
-      language = _availableLanguages.first;
-      await flutterTts.setLanguage(language!);
-      print('🔊 Fallback to first available language: $language');
-    }
+    print('🔻 No preferred languages available, fallback required.');
   }
+
+  // Future<void> _setDefaultLanguage() async {
+  //   // Try to find and set English language
+  //   List<String> englishOptions = [
+  //     'en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN', 'en'
+  //   ];
+  //
+  //   for (String englishLang in englishOptions) {
+  //     try {
+  //       bool isAvailable = await flutterTts.isLanguageAvailable(englishLang);
+  //       if (isAvailable) {
+  //         language = englishLang;
+  //         await flutterTts.setLanguage(englishLang);
+  //         print('🔊 Set English language to: $englishLang');
+  //         return;
+  //       }
+  //     } catch (e) {
+  //       print('⚠️ Failed to check language $englishLang: $e');
+  //     }
+  //   }
+  //
+  //   // Fallback to first available language
+  //   if (_availableLanguages.isNotEmpty) {
+  //     language = _availableLanguages.first;
+  //     await flutterTts.setLanguage(language!);
+  //     print('🔊 Fallback to first available language: $language');
+  //   }
+  // }
 
   void _setupCallbacks() {
     flutterTts.setStartHandler(() {
@@ -1140,7 +1228,6 @@ class VoiceAssistantService {
     await flutterTts.setSpeechRate(value);
     print('🔊 Rate set to: $value');
   }
-
   Future<void> setLanguage(String lang) async {
     if (!_isInitialized.value) return;
 
@@ -1150,23 +1237,62 @@ class VoiceAssistantService {
 
       bool isAvailable = await flutterTts.isLanguageAvailable(ttsLanguage);
       if (isAvailable) {
-        language = ttsLanguage;
-        var result = await flutterTts.setLanguage(ttsLanguage);
-        print('🔊 Language set successfully to: $ttsLanguage (result: $result)');
+        int result = await flutterTts.setLanguage(ttsLanguage);
+
+        if (result == 1) {
+          language = ttsLanguage;
+          print('🔊 Language set successfully to: $ttsLanguage');
+
+          // Try to find and set a matching voice
+          final matchingVoice = _availableVoices.firstWhere(
+                (v) => v['locale'] == ttsLanguage,
+            orElse: () => {},
+          );
+
+          if (matchingVoice.isNotEmpty) {
+            await flutterTts.setVoice(matchingVoice);
+            print('🗣️ Voice also set: ${matchingVoice['name']} (${matchingVoice['locale']})');
+          } else {
+            print('⚠️ No matching voice found for $ttsLanguage');
+          }
+
+        } else {
+          print('❌ setLanguage() failed with result code: $result');
+        }
       } else {
         print('⚠️ Language $ttsLanguage not available');
-        // Try to find similar language
-        String? similarLang = _findSimilarLanguage(ttsLanguage);
-        if (similarLang != null) {
-          language = similarLang;
-          await flutterTts.setLanguage(similarLang);
-          print('🔊 Using similar language: $similarLang');
-        }
       }
     } catch (e) {
-      print('❌ Error setting language: $e');
+      print('❌ Error setting language $lang: $e');
     }
   }
+
+  // Future<void> setLanguage(String lang) async {
+  //   if (!_isInitialized.value) return;
+  //
+  //   try {
+  //     String ttsLanguage = _mapLanguageCode(lang);
+  //     print('🔊 Attempting to set language: $lang -> $ttsLanguage');
+  //
+  //     bool isAvailable = await flutterTts.isLanguageAvailable(ttsLanguage);
+  //     if (isAvailable) {
+  //       language = ttsLanguage;
+  //       var result = await flutterTts.setLanguage(ttsLanguage);
+  //       print('🔊 Language set successfully to: $ttsLanguage (result: $result)');
+  //     } else {
+  //       print('⚠️ Language $ttsLanguage not available');
+  //       // Try to find similar language
+  //       String? similarLang = _findSimilarLanguage(ttsLanguage);
+  //       if (similarLang != null) {
+  //         language = similarLang;
+  //         await flutterTts.setLanguage(similarLang);
+  //         print('🔊 Using similar language: $similarLang');
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('❌ Error setting language: $e');
+  //   }
+  // }
 
   String? _findSimilarLanguage(String targetLang) {
     String langPrefix = targetLang.split('-')[0].toLowerCase();
@@ -1178,32 +1304,52 @@ class VoiceAssistantService {
     }
     return null;
   }
-
   String _mapLanguageCode(String lang) {
     String lowerLang = lang.toLowerCase();
 
     if (lowerLang.contains('ur') || lowerLang.contains('urdu')) {
-      // Try different Urdu language codes
-      List<String> urduCodes = ['ur-PK', 'ur-IN', 'ur'];
-      for (String code in urduCodes) {
-        if (_availableLanguages.any((l) => l.toLowerCase() == code.toLowerCase())) {
-          return code;
-        }
-      }
-      return 'ur-PK';
+      return _getFirstAvailable(['ur-PK', 'ur-IN', 'ur'], fallback: 'ur-PK');
     } else if (lowerLang.contains('en') || lowerLang.contains('english')) {
-      // Try different English language codes
-      List<String> englishCodes = ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en'];
-      for (String code in englishCodes) {
-        if (_availableLanguages.any((l) => l.toLowerCase() == code.toLowerCase())) {
-          return code;
-        }
-      }
-      return 'en-US';
+      return _getFirstAvailable(['en-US', 'en-GB', 'en-AU', 'en-CA', 'en'], fallback: 'en-US');
     }
 
     return lang;
   }
+
+  String _getFirstAvailable(List<String> preferred, {required String fallback}) {
+    for (final code in preferred) {
+      if (_availableLanguages.any((l) => l.toLowerCase() == code.toLowerCase())) {
+        return code;
+      }
+    }
+    return fallback;
+  }
+
+  // String _mapLanguageCode(String lang) {
+  //   String lowerLang = lang.toLowerCase();
+  //
+  //   if (lowerLang.contains('ur') || lowerLang.contains('urdu')) {
+  //     // Try different Urdu language codes
+  //     List<String> urduCodes = ['ur-PK', 'ur-IN', 'ur'];
+  //     for (String code in urduCodes) {
+  //       if (_availableLanguages.any((l) => l.toLowerCase() == code.toLowerCase())) {
+  //         return code;
+  //       }
+  //     }
+  //     return 'ur-PK';
+  //   } else if (lowerLang.contains('en') || lowerLang.contains('english')) {
+  //     // Try different English language codes
+  //     List<String> englishCodes = ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en'];
+  //     for (String code in englishCodes) {
+  //       if (_availableLanguages.any((l) => l.toLowerCase() == code.toLowerCase())) {
+  //         return code;
+  //       }
+  //     }
+  //     return 'en-US';
+  //   }
+  //
+  //   return lang;
+  // }
 
   void dispose() {
     forceStop();

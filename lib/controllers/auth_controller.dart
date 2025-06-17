@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/home_screen.dart';
+import '../screens/main_screen.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -107,7 +108,7 @@ class AuthController extends GetxController {
       if (!isFirebaseAvailable.value) {
         print('🔄 Firebase not available, using demo login');
         createDemoUser();
-        Get.offAll(() => HomeScreen());
+        Get.offAll(() => MainScreen());
         return;
       }
 
@@ -119,7 +120,7 @@ class AuthController extends GetxController {
       if (result.user != null) {
         print('✅ User signed in successfully');
         await _updateLastLogin(result.user!.uid);
-        Get.offAll(() => HomeScreen());
+        Get.offAll(() => MainScreen());
       }
     } on FirebaseAuthException catch (e) {
       print('❌ Auth error: ${e.code} - ${e.message}');

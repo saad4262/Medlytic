@@ -18,13 +18,13 @@ class AnalysisScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Report Analysis'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: Center(child: const Text('Report Analysis')),
+      //   // leading: IconButton(
+      //   //   icon: const Icon(Icons.arrow_back),
+      //   //   onPressed: () => Get.back(),
+      //   // ),
+      // ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return Center(
@@ -52,14 +52,37 @@ class AnalysisScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'AI Analysis Results',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  SizedBox(height: 40,),
+                  Row(
+                    children: [
+                      Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.surfaceColor,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: AppTheme.cardShadow,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back_rounded),
+                            onPressed: () => Get.back(),
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+
+
+                      SizedBox(width: 40,),
+                      Text('Report Analysis',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: Colors.black),)
+                    ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 40,),
+
+                  // const Text(
+                  //   'Analysis Results',
+                  //   style: TextStyle(
+                  //     fontSize: 24,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 8),
                   const Text(
                     'Here\'s what our AI found in your medical report',
                     style: TextStyle(
@@ -122,7 +145,7 @@ class AnalysisScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // Voice assistant controls
-                  VoiceAssistantControls(text: controller.analysisResult.value),
+                  // VoiceAssistantControls(text: controller.analysisResult.value),
 
                   const SizedBox(height: 24),
 

@@ -13,8 +13,27 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.primaryColor, AppTheme.primaryColor.withOpacity(0.8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -23,20 +42,11 @@ class ProfileScreen extends StatelessWidget {
             Center(
               child: Column(
                 children: [
-                  Obx(() => CircleAvatar(
+                   CircleAvatar(
                     radius: 50,
-                    backgroundColor: AppTheme.primaryColor,
-                    backgroundImage: authController.userModel.value?.photoUrl != null
-                        ? NetworkImage(authController.userModel.value!.photoUrl!)
-                        : null,
-                    child: authController.userModel.value?.photoUrl == null
-                        ? const Icon(
-                            Icons.person,
-                            size: 50,
-                            color: Colors.white,
-                          )
-                        : null,
-                  )),
+                    // backgroundColor: AppTheme.primaryColor,
+                    backgroundImage: AssetImage('assets/images/saad-img.jpg'),
+                  ),
                   const SizedBox(height: 16),
                   Obx(() => Text(
                     authController.userModel.value?.displayName ?? 'User',
@@ -50,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
                     authController.userModel.value?.email ?? '',
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppTheme.accentColor,
+                      color: AppTheme.primaryColor,
                     ),
                   )),
                 ],
